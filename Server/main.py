@@ -8,10 +8,10 @@ app = Flask(__name__)
 
 #pymysql
 conn = pymysql.connect( 
-        host=os.getenv('HOST'), 
-        user=os.getenv('USER'),  
-        password = os.getenv('PASS'), 
-        db=os.getenv('DB'), 
+        host=os.getenv('HOSTDB'), 
+        user=os.getenv('USERDB'),  
+        password = os.getenv('PASSDB'), 
+        db=os.getenv('DBDB'), 
         ) 
 
 
