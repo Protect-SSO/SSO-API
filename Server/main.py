@@ -1,18 +1,22 @@
 from flask import Flask, request, jsonify
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
 import os
 from dotenv import load_dotenv, dotenv_values
+import pymysql
 
-load_dotenv()
+load_dotenv()#loading env variables
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = os.getenv('HOST')
-app.config['MYSQL_USER'] = os.getenv('USER')
-app.config['MYSQL_PASSWORD'] = os.getenv('PASS')
-app.config['MYSQL_DB'] = os.getenv('DB')
+
+#pymysql
+conn = pymysql.connect( 
+        host=os.getenv('HOST'), 
+        user=os.getenv('USER'),  
+        password = os.getenv('PASS'), 
+        db=os.getenv('DB'), 
+        ) 
 
 
-mysql = MySQL(app)
+#mysql configuration
+
 
 @app.route("/")
 def home():
@@ -31,11 +35,11 @@ def login():
     UserName = req['UserName']
     Password = req['Password']
     print(UserName)
-    cursor = mysql.connection.cursor()
+    cur = conn.cursor() 
     query_string = "SELECT * FROM Users WHERE UserName = %s AND Password = %s"
 
-    cursor.execute(query_string,[UserName, Password])
-    dat = cursor.fetchall()
+    cur.execute(query_string,[UserName, Password])
+    dat = cur.fetchall()
 
     if(dat):
         data = {
