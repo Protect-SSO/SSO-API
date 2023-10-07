@@ -101,7 +101,7 @@ def RegOrg():
         insertUser = conn.cursor()
 
         sql = "INSERT INTO Users (UserName, Password, FirstName, LastName, Email, AccountType, Organization) VALUES (%s, %s,%s, %s,%s, %s,%s)"
-        val = [UserName, Password, FirstName, LastName, Email, "Employee", OrgName]
+        val = [UserName, Password, FirstName, LastName, Email, "Owner", OrgName]
         insertUser.execute(sql, val)
 
         conn.commit()
