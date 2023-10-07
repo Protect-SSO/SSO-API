@@ -20,7 +20,7 @@ conn = pymysql.connect(
         ) 
 
 #jwt where it gets passed into:
-
+#Auth.config['KEY']=os.getenv('SECRETKEY')
 
 #jwt create token function
 def createToken(username):
@@ -48,7 +48,7 @@ def login():
     if(dat):#if user info is correct
 
         #jwt invoke create token to you guessed it create a token
-        token=createToken(dat[0])
+        token=jwt.encoded = jwt.encode({"user": dat[0]}, "secrete", algorithm="HS256")
 
 
         data = {
