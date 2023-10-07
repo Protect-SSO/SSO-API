@@ -45,6 +45,7 @@ def login():
     #json object response
     return jsonify(data)
 
+
 @Auth.route("/RegisterOrg", methods=('POST',))
 def RegOrg():
     #request input
@@ -56,6 +57,8 @@ def RegOrg():
     #   LastName:
     #   Email:
     #}
+
+    #request info
     req = request.get_json()
     OrgName = req['OrgName']
     UserName = req['UserName']
@@ -65,7 +68,7 @@ def RegOrg():
     Email = req['Email']
 
     cur = conn.cursor()
-    #query for finding user user in 
+    #query for finding user
     query_string = "SELECT * FROM Users WHERE UserName = %s"
 
     #query execute
@@ -74,7 +77,7 @@ def RegOrg():
 
 
     cur1 = conn.cursor()
-    #query for finding user user in 
+    #query for finding org
     query_string = "SELECT * FROM Organizations WHERE OrgName = %s"
 
     #query execute
@@ -82,11 +85,11 @@ def RegOrg():
     Org = cur1.fetchall()
 
 
-    if(User or Org):#if user info is correct
+    if(User or Org):#if user or org found
         data = {
             "Registered": "False"
         }
-    else:#if user info is not correct
+    else:#if no org or user exist, register
         
         insertUser = conn.cursor()
 
@@ -95,7 +98,6 @@ def RegOrg():
         insertUser.execute(sql, val)
 
         conn.commit()
-
 
         insertOrg = conn.cursor()
 
