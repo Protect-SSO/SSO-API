@@ -3,6 +3,10 @@ import pymysql
 import os
 from dotenv import load_dotenv, dotenv_values
 
+#jwt imports
+import jwt
+import datetime
+
 
 load_dotenv()#loading env variables
 Auth = Blueprint("Auth",__name__)
@@ -14,6 +18,16 @@ conn = pymysql.connect(
         password = os.getenv('PASSDB'), 
         db=os.getenv('DBDB'), 
         ) 
+
+#jwt where it gets passed into:
+
+
+#jwt create token function
+def createToken(username):
+    token=jwt.encode({'user':username, 
+                      'exp': datetime.datetime.utcnow()+datetime.timedelta(minutes=5)},
+                        os.getenv('SECRETKEY'))
+    return token.decode('UTF-8')
 
 #route that handles login and notifies website
 @Auth.route("/Login", methods=('POST',))
@@ -32,9 +46,14 @@ def login():
     cur.execute(query_string,[UserName, Password])
     dat = cur.fetchone()
     if(dat):#if user info is correct
+
+        #jwt invoke create token to you guessed it create a token
+        token=createToken(dat[0])
+
+
         data = {
             "Login": "True",
-            "Token":"token",
+            "Token":token,
             "User": {
                 "UserName": dat[0],
                 "FirstName": dat[2],
