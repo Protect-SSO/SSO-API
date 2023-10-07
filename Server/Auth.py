@@ -30,12 +30,21 @@ def login():
 
     #query execute
     cur.execute(query_string,[UserName, Password])
-    dat = cur.fetchall()
-
+    dat = cur.fetchone()
+    for x in dat:
+        print(x)
     if(dat):#if user info is correct
         data = {
             "Login": "True",
-            "Token":"token"
+            "Token":"token",
+            "User": {
+                "UserName": dat[0],
+                "FirstName": dat[2],
+                "LastName": dat[3],
+                "Email": dat[4],
+                "AccountType": dat[5],
+                "Org": dat[6],
+            }
         }
     else:#if user info is not correct
         data = {
