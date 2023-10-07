@@ -31,8 +31,6 @@ def login():
     #query execute
     cur.execute(query_string,[UserName, Password])
     dat = cur.fetchone()
-    for x in dat:
-        print(x)
     if(dat):#if user info is correct
         data = {
             "Login": "True",
