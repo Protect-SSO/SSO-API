@@ -1,8 +1,35 @@
 from flask import Blueprint, render_template, request, jsonify
 import pymysql
-import os
+import os, json
 from dotenv import load_dotenv, dotenv_values
+from dataclasses import dataclass
 
+@dataclass(eq=True)
+class UserObj:
+    UserName     :str
+    Password     :str
+    FirstName    :str
+    LastName     :str
+    Email        :str
+    AccountType  :str
+    Organization :str
+
+    def __init__(self, items):
+        print(f"items is/are {items}")
+        self.UserName     = items[0]
+        self.Password     = items[1]
+        self.FirstName    = items[2]
+        self.LastName     = items[3]
+        self.Email        = items[4]
+        self.AccountType  = items[5]
+        self.Organization = items[6]
+
+    def get_json(self):
+        return dataclass.asdict(self)
+
+
+
+    
 
 load_dotenv()#loading env variables
 Auth = Blueprint("Auth",__name__)
@@ -119,4 +146,76 @@ def RegOrg():
         }
 
     #json object response
+    return jsonify(data)
+
+@Auth.route("/RegisterUser", methods=('POST',))
+def RegUser():
+    data = {
+        "Registered": "False"
+    }
+    #request input
+    #{
+    #   +--------------+--------------+------+-----+---------+-------+
+    #   +DB Layout
+    #   +--------------+--------------+------+-----+---------+-------+
+    #   | Field        | Type         | Null | Key | Default | Extra |
+    #   +--------------+--------------+------+-----+---------+-------+
+    #   | UserName     | varchar(100) | NO   | PRI | NULL    |       |
+    #   | Password     | varchar(100) | NO   |     | NULL    |       |
+    #   | FirstName    | varchar(100) | NO   |     | NULL    |       |
+    #   | LastName     | varchar(100) | NO   |     | NULL    |       |
+    #   | Email        | varchar(100) | NO   |     | NULL    |       |
+    #   | AccountType  | varchar(100) | NO   |     | NULL    |       |
+    #   | Organization | varchar(100) | NO   |     | NULL    |       |
+    #   +--------------+--------------+------+-----+---------+-------+
+    #}
+
+    #request info
+    req = request.get_json()
+    if not req:
+        return jsonify(data)
+
+    Organization = req['OrgName']
+    UserName = req['UserName']
+    Password = req['Password']
+    FirstName = req['FirstName']
+    LastName = req['LastName']
+    Email = req['Email']
+    AccountType = "User"
+
+    cur = conn.cursor()
+    # Ensure that org Exists
+    query_string = "SELECT * FROM Users WHERE Organization = %s;"
+
+    #query execute
+    cur.execute(query_string,[Organization])
+
+    valid_org_rows = cur.fetchall()
+    
+    if not valid_org_rows:
+        # Valid org does not exist
+        data['Reason'] = "Passed Organization isn't valid"
+        return jsonify(data)
+
+    print(valid_org_rows)
+
+
+    row_objs = [UserObj(item) for item in valid_org_rows]
+
+    for row_obj in row_objs:
+        if UserName == row_obj.UserName:
+            # User exists
+            data['Reason'] = "User already exists"
+            return jsonify(data)
+
+
+    sql = "INSERT INTO Users (UserName, Password, FirstName, LastName, Email, AccountType, Organization) VALUES (%s, %s,%s, %s,%s, %s,%s)"
+    val = [UserName, Password, FirstName, LastName, Email, AccountType, Organization]
+    cur.execute(sql, val)
+
+    conn.commit()
+
+    data = {
+        "Registered": "True"
+    }
     return jsonify(data)
