@@ -175,7 +175,7 @@ def RegUser():
     if not req:
         return jsonify(data)
 
-    Organization = req['OrgName']
+    Organization = req['Org']
     UserName = req['UserName']
     Password = req['Password']
     FirstName = req['FirstName']
@@ -196,9 +196,6 @@ def RegUser():
         # Valid org does not exist
         data['Reason'] = "Passed Organization isn't valid"
         return jsonify(data)
-
-    print(valid_org_rows)
-
 
     row_objs = [UserObj(item) for item in valid_org_rows]
 
