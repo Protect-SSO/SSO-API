@@ -175,7 +175,7 @@ def RegUser():
     if not req:
         return jsonify(data)
 
-    Organization = req['Org']
+    Organization = req['OrgName']
     UserName = req['UserName']
     Password = req['Password']
     FirstName = req['FirstName']
