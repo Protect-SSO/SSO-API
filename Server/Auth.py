@@ -68,7 +68,7 @@ def login():
                 "LastName": dat[3],
                 "Email": dat[4],
                 "AccountType": dat[5],
-                "Org": dat[6],
+                "OrgName": dat[6],
             }
         }
     else:#if user info is not correct
