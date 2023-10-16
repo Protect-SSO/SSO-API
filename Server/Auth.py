@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, config, render_template, request, jsonify
 import pymysql
+#!/usr/bin/python
 import os, json
 from dotenv import load_dotenv, dotenv_values
 from dataclasses import dataclass
+from hashlib import sha512
 
 @dataclass(eq=True)
 class UserObj:
@@ -35,12 +37,20 @@ load_dotenv()#loading env variables
 Auth = Blueprint("Auth",__name__)
 
 #mysql connection config
-conn = pymysql.connect( 
-        host=os.getenv('HOSTDB'), 
-        user=os.getenv('USERDB'),  
-        password = os.getenv('PASSDB'), 
-        db=os.getenv('DBDB'), 
-        ) 
+
+sql_config = {}
+local = False
+if os.getenv("IS_DOCKER") or local:
+    sql_config['host'] = 'Database'
+    sql_config['user'] = 'root'
+    sql_config['db'] = 'SSO'
+else:
+    sql_config['host']=os.getenv('HOSTDB')
+    sql_config['user']=os.getenv('USERDB')
+    sql_config['password']=os.getenv('PASSDB')
+    sql_config['db']=os.getenv('DBDB')
+
+conn = pymysql.connect( **sql_config)
 
 #route that handles login and notifies website
 @Auth.route("/Login", methods=('POST',))
@@ -58,6 +68,7 @@ def login():
     #query execute
     cur.execute(query_string,[UserName, Password])
     dat = cur.fetchone()
+    print(dat)
     if(dat):#if user info is correct
         data = {
             "Login": "True",
