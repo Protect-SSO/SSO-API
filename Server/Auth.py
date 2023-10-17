@@ -3,6 +3,33 @@ import pymysql
 import os, json
 from dotenv import load_dotenv, dotenv_values
 from dataclasses import dataclass
+import bcrypt
+
+#Encryption methods
+def encrypt(text):
+    #hash text
+    # converting password to array of bytes 
+    bytes = text.encode('utf-8') 
+  
+    # generating the salt 
+    salt = bcrypt.gensalt() 
+  
+    # Hashing the password 
+    hash = bcrypt.hashpw(bytes, salt) 
+    return hash
+
+
+def comparePasswords(password, DBvalue):
+    #compare user input to value in database
+    DBvalue = DBvalue.encode('utf-8')
+    password = password.encode('utf-8')
+    result = bcrypt.checkpw(password, DBvalue) 
+    
+    return result
+
+
+
+  
 
 @dataclass(eq=True)
 class UserObj:
@@ -53,24 +80,32 @@ def login():
     
     cur = conn.cursor()
     #query for logging user in 
-    query_string = "SELECT * FROM Users WHERE UserName = %s AND Password = %s"
+    query_string = "SELECT * FROM Users WHERE UserName = %s"
 
     #query execute
-    cur.execute(query_string,[UserName, Password])
+    cur.execute(query_string,[UserName])
     dat = cur.fetchone()
+    data = {}
     if(dat):#if user info is correct
-        data = {
-            "Login": "True",
-            "Token":"token",
-            "User": {
-                "UserName": dat[0],
-                "FirstName": dat[2],
-                "LastName": dat[3],
-                "Email": dat[4],
-                "AccountType": dat[5],
-                "OrgName": dat[6],
+        
+        
+        if(comparePasswords(Password,dat[1])):
+            data = {
+                "Login": "True",
+                "Token":"token",
+                "User": {
+                    "UserName": dat[0],
+                    "FirstName": dat[2],
+                    "LastName": dat[3],
+                    "Email": dat[4],
+                    "AccountType": dat[5],
+                    "OrgName": dat[6],
+                }
             }
-        }
+        
+        
+        
+        
     else:#if user info is not correct
         data = {
             "Login": "False",
@@ -100,6 +135,8 @@ def RegOrg():
     FirstName = req['FirstName']
     LastName = req['LastName']
     Email = req['Email']
+    #hash password
+    Password = encrypt(Password)
 
     cur = conn.cursor()
     #query for finding user
