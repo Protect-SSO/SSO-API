@@ -223,6 +223,7 @@ def RegUser():
     LastName = req['LastName']
     Email = req['Email']
     AccountType = "User"
+    Password = encrypt(Password)
 
     cur = conn.cursor()
     # Ensure that org Exists
