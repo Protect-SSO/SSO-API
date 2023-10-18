@@ -98,7 +98,7 @@ def login():
         if(comparePasswords(Password,dat[1])):
             data = {
                 "Login": "True",
-                "Token":"token",
+                "Token":jwt.encode({'user':UserName, 'exp': datetime.datetime.utcnow()+datetime.timedelta(minutes=5)}, os.getenv('SECRETKEY')),
                 "User": {
                     "UserName": dat[0],
                     "FirstName": dat[2],
