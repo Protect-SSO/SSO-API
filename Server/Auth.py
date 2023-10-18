@@ -5,6 +5,8 @@ import os, json
 from dotenv import load_dotenv, dotenv_values
 from dataclasses import dataclass
 import bcrypt
+import jwt
+import datetime
 
 #Encryption methods
 def encrypt(text):
