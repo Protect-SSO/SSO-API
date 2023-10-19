@@ -12,18 +12,18 @@ Token = Blueprint("Token",__name__)
 
 @Token.route("/decode_token", methods=('POST',))
 def decode_token_route():
-        #request info
-        req = request.get_json()
-        Token = req['Token']
-        try:
-            decoded_data=jwt.decode(jwt=Token,key=os.getenv('SECRETKEY'),algorithms=['HS256'])
-            return jsonify(decoded_data)
-        except jwt.DecodeError:
-            return jsonify({
-                "error":'Invalid token'
-            })
-        except jwt.ExpiredSignatureError:
-            return jsonify({
-                "error":"expired" 
-            })
-
+    #request info
+    req = request.get_json()
+    Token = req['Token']
+    try:
+        decoded_data=jwt.decode(jwt=Token,key=os.getenv('SECRETKEY'),algorithms=['HS256'])
+        return jsonify(decoded_data)
+    except jwt.DecodeError:
+        return jsonify({
+            "error":'Invalid token'
+        })
+    except jwt.ExpiredSignatureError:
+        return jsonify({
+            "error":"expired" 
+        })
+    
