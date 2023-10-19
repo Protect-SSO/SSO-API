@@ -55,7 +55,7 @@ def home():
 
 #
 @AppServices.route("/GetUserApps", methods=('POST',))
-def login():
+def GetUserApps():
     #get request info
     req = request.get_json()
     UserName = req['UserName']
@@ -71,3 +71,24 @@ def login():
     
     #json object response
     return jsonify(data)
+
+#
+@AppServices.route("/getRoute", methods=('POST',))
+def getRoute():
+    #get request info
+    req = request.get_json()
+    AppName = req['AppName']
+    print(AppName)
+    
+    cur = conn.cursor()
+    #
+    query_string = "SELECT Redirect_URL FROM Apps WHERE AppName = %s"
+
+    #query execute
+    cur.execute(query_string,[AppName])
+    data = cur.fetchone()
+    
+    #json object response
+    return jsonify({
+        "route":data[0]
+    })
