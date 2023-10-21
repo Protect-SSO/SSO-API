@@ -30,6 +30,10 @@ def comparePasswords(password, DBvalue):
     
     return result
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4b13034 (removed merge conflicts)
 @dataclass(eq=True)
 class UserObj:
     UserName     :str
