@@ -30,10 +30,6 @@ def comparePasswords(password, DBvalue):
     
     return result
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 4b13034 (removed merge conflicts)
 @dataclass(eq=True)
 class UserObj:
     UserName     :str
@@ -87,6 +83,8 @@ def login():
     req = request.get_json()
     UserName = req['UserName']
     Password = req['Password']
+    print(f"UserName {UserName}")
+    print(f"Password {Password}")
     
     cur = conn.cursor()
     #query for logging user in 
@@ -95,6 +93,7 @@ def login():
     #query execute
     cur.execute(query_string,[UserName])
     dat = cur.fetchone()
+    print(dat)
     data = {}
     if(dat):#if user info is correct
         
@@ -229,7 +228,6 @@ def RegUser():
     LastName = req['LastName']
     Email = req['Email']
     AccountType = "User"
-    Password = encrypt(Password)
 
     cur = conn.cursor()
     # Ensure that org Exists

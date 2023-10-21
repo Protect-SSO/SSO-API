@@ -11,6 +11,7 @@ services:
       - main
     environment:
       IS_DOCKER: 1
+      SECRETKEY: "SOME_KEY"
 
   sql-container:
     build: ./Database/
