@@ -93,7 +93,6 @@ def login():
     #query execute
     cur.execute(query_string,[UserName])
     dat = cur.fetchone()
-    print(dat)
     data = {}
     if(dat):#if user info is correct
         
@@ -228,6 +227,7 @@ def RegUser():
     LastName = req['LastName']
     Email = req['Email']
     AccountType = "User"
+    Password = encrypt(Password)
 
     cur = conn.cursor()
     # Ensure that org Exists
