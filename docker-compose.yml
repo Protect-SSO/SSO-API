@@ -27,6 +27,11 @@ services:
     environment:
       IS_DOCKER: 1
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      # for remote host connections
+      HOST: ${HOST}
+      PASSWORD: ${PASSWORD}
+      DB: ${DB}
+      APPUSER: ${APPUSER}
 
 networks:
   main:
