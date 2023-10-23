@@ -161,8 +161,6 @@ def RequestApp():
             );
             """
 
-            #query execute
-            print(insert_string)
             cursor.execute(insert_string)
         conn.commit()
     
