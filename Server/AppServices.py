@@ -156,3 +156,23 @@ def RegOrg():
     #json object response
     return jsonify(data)
 
+@AppServices.route("/RequestApp", methods=('POST',))
+def RequestApp():
+    #get request info
+    req = request.get_json()
+
+    AppName = req['AppName']
+    UserName = req['UserName']
+    OrgName = req['OrgName']
+    
+    insertRequest = conn.cursor()
+
+    sql = "INSERT INTO AppRequests (UserName, AppName, OrgName) VALUES (%s, %s,%s)"
+    
+
+    insertRequest.execute(sql,[UserName,AppName,OrgName])
+    conn.commit()
+    
+    return jsonify({
+        "AppRequested": "True"
+    })
