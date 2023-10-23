@@ -93,6 +93,7 @@ def getRoute():
         "route":data[0]
     })
 
+<<<<<<< HEAD
 
 
 @AppServices.route("/RegisterApp", methods=('POST',))
@@ -135,3 +136,37 @@ def RegOrg():
 
     #json object response
     return jsonify(data)
+
+@AppServices.route("/RequestApp", methods=('POST',))
+def RequestApp():
+    #get request info
+    req = request.get_json()
+
+    AppName = req['AppName']
+    UserName = req['UserName']
+    OrgName = req['OrgName']
+    
+    with conn as connection:
+        with connection.cursor() as cursor:
+
+            insert_string = f""" INSERT INTO `AppRequests`
+            (
+                    UserName,
+                    AppName,
+                    OrgName
+            ) VALUES (
+                    '{UserName}',
+                    '{AppName}',
+                    '{OrgName}'
+            );
+            """
+
+            #query execute
+            print(insert_string)
+            cursor.execute(insert_string)
+        conn.commit()
+    
+    return jsonify({
+        "AppRequested": "True"
+    })
+>>>>>>> 73907bd (basic functionality)
