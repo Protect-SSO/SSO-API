@@ -92,3 +92,46 @@ def getRoute():
     return jsonify({
         "route":data[0]
     })
+
+
+
+@AppServices.route("/RegisterApp", methods=('POST',))
+def RegOrg():
+    
+
+    #request info
+    req = request.get_json()
+    OrgName = req['OrgName']
+    AppName = req['AppName']
+    RedirectURL = req['RedirectURL']
+
+    cur = conn.cursor()
+    #query for finding user
+    query_string = "SELECT * FROM Apps WHERE AppName = %s"
+
+    #query execute
+    cur.execute(query_string,[AppName])
+    App = cur.fetchall()
+
+
+
+    if(App):#if user or org found
+        data = {
+            "Registered": "False"
+        }
+    else:#if no org or user exist, register
+        
+        insertUser = conn.cursor()
+
+        sql = "INSERT INTO Apps (AppName, Redirect_URL, Org) VALUES (%s, %s,%s)"
+        val = [AppName, RedirectURL,OrgName]
+        insertUser.execute(sql, val)
+
+        conn.commit()
+        
+        data = {
+            "Registered": "True"
+        }
+
+    #json object response
+    return jsonify(data)
