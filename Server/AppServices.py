@@ -72,6 +72,26 @@ def GetUserApps():
     #json object response
     return jsonify(data)
 
+
+#
+@AppServices.route("/GetApps", methods=('POST',))
+def GetApps():
+    #get request info
+    req = request.get_json()
+    OrgName = req['OrgName']
+    print(OrgName)
+    
+    cur = conn.cursor()
+    #
+    query_string = "SELECT AppName FROM Apps WHERE Org = %s"
+
+    #query execute
+    cur.execute(query_string,[OrgName])
+    data = cur.fetchall()
+    
+    #json object response
+    return jsonify(data)
+
 #
 @AppServices.route("/getRoute", methods=('POST',))
 def getRoute():
@@ -135,3 +155,4 @@ def RegOrg():
 
     #json object response
     return jsonify(data)
+
