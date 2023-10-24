@@ -193,3 +193,49 @@ def GetRequest():
     
     #json object response
     return jsonify(data)
+
+@AppServices.route("/GetOrgRequests", methods=('POST',))
+def GetOrgRequest():
+    #get request info
+    req = request.get_json()
+    OrgName = req['OrgName']
+    print(OrgName)
+    cur = conn.cursor()
+    #
+    query_string = "SELECT AppName, UserName FROM AppRequests WHERE OrgName = %s"
+
+    #query execute
+    cur.execute(query_string,[OrgName])
+    data = cur.fetchall()
+    
+    #json object response
+    return jsonify(data)
+
+
+
+@AppServices.route("/AcceptRequest", methods=('POST',))
+def AcceptRequest():
+    #get request info
+    req = request.get_json()
+    AppName = req['AppName']
+    OrgName = req['OrgName']
+    UserName = req['UserName']
+    
+    RegApp = conn.cursor()
+    #
+    query_string = "INSERT INTO AppUsers (AppName, Users) Values(%s,%s)"
+    #query execute
+    RegApp.execute(query_string,[AppName, UserName])
+    conn.commit()
+
+    DeleteReq = conn.cursor()
+    #
+    query_string = "DELETE from AppRequests where AppName = %s AND UserName = %s AND OrgName = %s;"
+    #query execute
+    DeleteReq.execute(query_string,[AppName, UserName, OrgName])
+    conn.commit()
+    
+    #json object response
+    return jsonify({
+        "reponse": "Accepted"
+    })
