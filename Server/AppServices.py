@@ -176,3 +176,20 @@ def RequestApp():
     return jsonify({
         "AppRequested": "True"
     })
+
+@AppServices.route("/GetRequests", methods=('POST',))
+def GetRequest():
+    #get request info
+    req = request.get_json()
+    UserName = req['UserName']
+    
+    cur = conn.cursor()
+    #
+    query_string = "SELECT AppName FROM AppRequests WHERE UserName = %s"
+
+    #query execute
+    cur.execute(query_string,[UserName])
+    data = cur.fetchall()
+    
+    #json object response
+    return jsonify(data)
