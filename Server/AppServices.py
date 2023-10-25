@@ -68,7 +68,7 @@ def GetUserApps():
     #query execute
     cur.execute(query_string,[UserName])
     data = cur.fetchall()
-    
+    cur.close()
     #json object response
     return jsonify(data)
 
@@ -89,6 +89,7 @@ def GetApps():
     cur.execute(query_string,[OrgName])
     data = cur.fetchall()
     
+    cur.close()
     #json object response
     return jsonify(data)
 
@@ -108,6 +109,7 @@ def getRoute():
     cur.execute(query_string,[AppName])
     data = cur.fetchone()
     
+    cur.close()
     #json object response
     return jsonify({
         "route":data[0]
@@ -148,11 +150,11 @@ def RegOrg():
         insertUser.execute(sql, val)
 
         conn.commit()
-        
+        insertUser.close()
         data = {
             "Registered": "True"
         }
-
+    cur.close()
     #json object response
     return jsonify(data)
 
@@ -172,7 +174,7 @@ def RequestApp():
 
     insertRequest.execute(sql,[UserName,AppName,OrgName])
     conn.commit()
-    
+    insertRequest.close()
     return jsonify({
         "AppRequested": "True"
     })
@@ -190,7 +192,8 @@ def GetRequest():
     #query execute
     cur.execute(query_string,[UserName])
     data = cur.fetchall()
-    
+
+    cur.close()
     #json object response
     return jsonify(data)
 
@@ -208,6 +211,7 @@ def GetOrgRequest():
     cur.execute(query_string,[OrgName])
     data = cur.fetchall()
     
+    cur.close()
     #json object response
     return jsonify(data)
 
@@ -234,7 +238,8 @@ def AcceptRequest():
     #query execute
     DeleteReq.execute(query_string,[AppName, UserName, OrgName])
     conn.commit()
-    
+    DeleteReq.close()
+    RegApp.close()
     #json object response
     return jsonify({
         "reponse": "Accepted"

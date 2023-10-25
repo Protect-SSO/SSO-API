@@ -113,6 +113,7 @@ def login():
             "Login": "False",
         }
 
+    cur.close()
     #json object response
     return jsonify(data)
 
@@ -185,6 +186,10 @@ def RegOrg():
         }
 
     #json object response
+    cur.close()
+    cur1.close()
+    insertUser.close()
+    insertOrg.close()
     return jsonify(data)
 
 @Auth.route("/RegisterUser", methods=('POST',))
@@ -252,6 +257,7 @@ def RegUser():
 
     conn.commit()
 
+    cur.close()
     data = {
         "Registered": "True"
     }
