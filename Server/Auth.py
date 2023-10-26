@@ -7,6 +7,18 @@ import bcrypt
 import jwt
 import datetime
 
+
+
+#conn = conn = pymysql.connect( host=os.getenv('HOSTDB'), user=os.getenv('USERDB'),  password = os.getenv('PASSDB'), db=os.getenv('DBDB'), ) 
+#cursor = conn.cursor()
+#query = "INSERT INTO tablename (text_for_field1, text_for_field2, text_for_field3, text_for_field4) VALUES (%s, %s, %s, %s)"
+#cursor.execute(query, (field1, field2, field3, field4))
+#conn.commit()
+#cursor.close()
+#conn.close()
+
+
+
 #Encryption methods
 def encrypt(text):
     #hash text
@@ -63,17 +75,22 @@ class UserObj:
 load_dotenv()#loading env variables
 Auth = Blueprint("Auth",__name__)
 
-#mysql connection config
-conn = pymysql.connect( 
-        host=os.getenv('HOSTDB'), 
-        user=os.getenv('USERDB'),  
-        password = os.getenv('PASSDB'), 
-        db=os.getenv('DBDB'), 
-        ) 
+def OpenConnection():
+    #mysql connection config
+    conn = pymysql.connect( 
+            host=os.getenv('HOSTDB'), 
+            user=os.getenv('USERDB'),  
+            password = os.getenv('PASSDB'), 
+            db=os.getenv('DBDB'), 
+            ) 
+    return conn
 
 #route that handles login and notifies website
 @Auth.route("/Login", methods=('POST',))
 def login():
+
+    conn =  OpenConnection()
+
     #get request info
     req = request.get_json()
     UserName = req['UserName']
@@ -114,6 +131,7 @@ def login():
         }
 
     cur.close()
+    conn.close()
     #json object response
     return jsonify(data)
 
@@ -131,6 +149,7 @@ def RegOrg():
     #}
 
     #request info
+    conn =  OpenConnection()
     req = request.get_json()
     OrgName = req['OrgName']
     UserName = req['UserName']
@@ -184,12 +203,13 @@ def RegOrg():
         data = {
             "Registered": "True"
         }
+        insertUser.close()
+        insertOrg.close()
 
     #json object response
     cur.close()
     cur1.close()
-    insertUser.close()
-    insertOrg.close()
+    conn.close()
     return jsonify(data)
 
 @Auth.route("/RegisterUser", methods=('POST',))
@@ -215,6 +235,7 @@ def RegUser():
     #}
 
     #request info
+    conn =  OpenConnection()
     req = request.get_json()
     if not req:
         return jsonify(data)
@@ -258,6 +279,7 @@ def RegUser():
     conn.commit()
 
     cur.close()
+    conn.close()
     data = {
         "Registered": "True"
     }

@@ -38,13 +38,15 @@ class UserObj:
 load_dotenv()#loading env variables
 AppServices = Blueprint("AppServices",__name__)
 
-#mysql connection config
-conn = pymysql.connect( 
-        host=os.getenv('HOSTDB'), 
-        user=os.getenv('USERDB'),  
-        password = os.getenv('PASSDB'), 
-        db=os.getenv('DBDB'), 
-        ) 
+def OpenConnection():
+    #mysql connection config
+    conn = pymysql.connect( 
+            host=os.getenv('HOSTDB'), 
+            user=os.getenv('USERDB'),  
+            password = os.getenv('PASSDB'), 
+            db=os.getenv('DBDB'), 
+            ) 
+    return conn 
 
 
 #home route used for testing
@@ -57,6 +59,7 @@ def home():
 @AppServices.route("/GetUserApps", methods=('POST',))
 def GetUserApps():
     #get request info
+    conn =  OpenConnection()
     req = request.get_json()
     UserName = req['UserName']
     print(UserName)
@@ -69,6 +72,7 @@ def GetUserApps():
     cur.execute(query_string,[UserName])
     data = cur.fetchall()
     cur.close()
+    conn.close()
     #json object response
     return jsonify(data)
 
@@ -77,6 +81,7 @@ def GetUserApps():
 @AppServices.route("/GetApps", methods=('POST',))
 def GetApps():
     #get request info
+    conn =  OpenConnection()
     req = request.get_json()
     OrgName = req['OrgName']
     print(OrgName)
@@ -90,6 +95,7 @@ def GetApps():
     data = cur.fetchall()
     
     cur.close()
+    conn.close()
     #json object response
     return jsonify(data)
 
@@ -97,6 +103,7 @@ def GetApps():
 @AppServices.route("/getRoute", methods=('POST',))
 def getRoute():
     #get request info
+    conn =  OpenConnection()
     req = request.get_json()
     AppName = req['AppName']
     print(AppName)
@@ -110,6 +117,7 @@ def getRoute():
     data = cur.fetchone()
     
     cur.close()
+    conn.close()
     #json object response
     return jsonify({
         "route":data[0]
@@ -122,6 +130,7 @@ def RegOrg():
     
 
     #request info
+    conn =  OpenConnection()
     req = request.get_json()
     OrgName = req['OrgName']
     AppName = req['AppName']
@@ -155,12 +164,14 @@ def RegOrg():
             "Registered": "True"
         }
     cur.close()
+    conn.close()
     #json object response
     return jsonify(data)
 
 @AppServices.route("/RequestApp", methods=('POST',))
 def RequestApp():
     #get request info
+    conn =  OpenConnection()
     req = request.get_json()
 
     AppName = req['AppName']
@@ -175,6 +186,7 @@ def RequestApp():
     insertRequest.execute(sql,[UserName,AppName,OrgName])
     conn.commit()
     insertRequest.close()
+    conn.close()
     return jsonify({
         "AppRequested": "True"
     })
@@ -182,6 +194,7 @@ def RequestApp():
 @AppServices.route("/GetRequests", methods=('POST',))
 def GetRequest():
     #get request info
+    conn =  OpenConnection()
     req = request.get_json()
     UserName = req['UserName']
     
@@ -194,12 +207,14 @@ def GetRequest():
     data = cur.fetchall()
 
     cur.close()
+    conn.close()
     #json object response
     return jsonify(data)
 
 @AppServices.route("/GetOrgRequests", methods=('POST',))
 def GetOrgRequest():
     #get request info
+    conn =  OpenConnection()
     req = request.get_json()
     OrgName = req['OrgName']
     print(OrgName)
@@ -212,6 +227,7 @@ def GetOrgRequest():
     data = cur.fetchall()
     
     cur.close()
+    conn.close()
     #json object response
     return jsonify(data)
 
@@ -220,6 +236,7 @@ def GetOrgRequest():
 @AppServices.route("/AcceptRequest", methods=('POST',))
 def AcceptRequest():
     #get request info
+    conn =  OpenConnection()
     req = request.get_json()
     AppName = req['AppName']
     OrgName = req['OrgName']
@@ -240,6 +257,7 @@ def AcceptRequest():
     conn.commit()
     DeleteReq.close()
     RegApp.close()
+    conn.close()
     #json object response
     return jsonify({
         "reponse": "Accepted"
