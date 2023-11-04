@@ -1,0 +1,39 @@
+services:
+  python-api:
+    depends_on: 
+        sql-container:
+            condition: service_healthy
+    container_name: Server
+    build: ./Server/
+    ports:
+      - "5000:5000"
+    networks:
+      - main
+    environment:
+      IS_DOCKER: 1
+      SECRETKEY: "SOME_KEY"
+
+  sql-container:
+    build: ./Database/
+    container_name: Database
+    ports:
+      - "3306:3306"
+    networks:
+      - main
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 5
+      interval: 5s
+    environment:
+      IS_DOCKER: 1
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+
+        # export HOSTDB='localhost'
+        # export PASSDB='pLue3472'
+        # export DBDB='SSO'
+        # export IS_DOCKER=1
+
+networks:
+  main:
+    name: main

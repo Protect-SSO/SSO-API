@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 import pymysql
 import os, json
+from pprint import pprint
 from dotenv import load_dotenv, dotenv_values
 from dataclasses import dataclass
 import bcrypt
@@ -11,13 +12,14 @@ import datetime
 def encrypt(text):
     #hash text
     # converting password to array of bytes 
-    bytes = text.encode('utf-8') 
+    # bytes = text.encode('utf-8') 
   
     # generating the salt 
     salt = bcrypt.gensalt() 
   
     # Hashing the password 
-    hash = bcrypt.hashpw(bytes, salt) 
+    # hash = bcrypt.hashpw(bytes, salt) 
+    hash = bcrypt.hashpw(text, salt) 
     return hash
 
 
@@ -58,18 +60,28 @@ class UserObj:
 
 
 
+Auth = Blueprint("Auth",__name__)
     
 
-load_dotenv()#loading env variables
-Auth = Blueprint("Auth",__name__)
+local = False
+sql_config = {}
+
+if os.getenv("IS_DOCKER") or local:
+    sql_config['host'] = 'Database'
+    sql_config['user'] = 'root'
+    sql_config['db'] = 'SSO'
+
+else:
+    load_dotenv()#loading env variables
+    sql_config['host'] = os.getenv('HOSTDB'), 
+    sql_config['user'] = os.getenv('USERDB'),  
+    sql_config['password'] = os.getenv('PASSDB'), 
+    sql_config['db'] = os.getenv('PASSDB'), 
+
 
 #mysql connection config
-conn = pymysql.connect( 
-        host=os.getenv('HOSTDB'), 
-        user=os.getenv('USERDB'),  
-        password = os.getenv('PASSDB'), 
-        db=os.getenv('DBDB'), 
-        ) 
+pprint(sql_config)
+conn = pymysql.connect(**sql_config) 
 
 #route that handles login and notifies website
 @Auth.route("/Login", methods=('POST',))
