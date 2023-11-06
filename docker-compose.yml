@@ -1,4 +1,17 @@
 services:
+  node-frontend:
+    depends_on: 
+        sql-container:
+            condition: service_healthy
+    container_name: node_app
+    build: ./Nodedocker/
+    ports:
+      - "3000:3000"
+    networks:
+      - main
+    environment:
+      IS_DOCKER: 1
+
   python-api:
     depends_on: 
         sql-container:
