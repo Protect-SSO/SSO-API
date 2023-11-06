@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 import pymysql
 import os, json
-from pprint import pprint
 from dotenv import load_dotenv, dotenv_values
 from dataclasses import dataclass
 import bcrypt
@@ -82,7 +81,6 @@ else:
 
 
 #mysql connection config
-pprint(sql_config)
 conn = pymysql.connect(**sql_config) 
 
 #route that handles login and notifies website
@@ -228,7 +226,6 @@ def RegUser():
     if not req:
         return jsonify(data)
 
-    print(req)
     Organization = req['OrgName']
     UserName = req['UserName']
     Password = req['Password']
