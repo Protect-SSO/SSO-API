@@ -38,13 +38,25 @@ class UserObj:
 load_dotenv()#loading env variables
 AppServices = Blueprint("AppServices",__name__)
 
+sql_config = {}
 #mysql connection config
-conn = pymysql.connect( 
-        host=os.getenv('HOSTDB'), 
-        user=os.getenv('USERDB'),  
-        password = os.getenv('PASSDB'), 
-        db=os.getenv('DBDB'), 
-        ) 
+if os.getenv("IS_DOCKER"):
+    print("Configuration is Docker")
+    sql_config['host'] = 'Database'
+    sql_config['database'] = 'SSO'
+    sql_config['user'] = 'custom'
+    sql_config['password'] = 'custom'
+
+else:
+    # load_dotenv()#loading env variables
+    sql_config['host'] = os.getenv('HOSTDB'), 
+    sql_config['user'] = os.getenv('USERDB'),  
+    sql_config['password'] = os.getenv('PASSDB'), 
+    sql_config['db'] = os.getenv('PASSDB'), 
+
+
+#mysql connection config
+conn = pymysql.connect(**sql_config) 
 
 
 #home route used for testing
