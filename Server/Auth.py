@@ -8,7 +8,7 @@ import jwt
 import datetime
 
 #Encryption methods
-def encrypt(text):
+def encrypt(text:str):
     #hash text
     # converting password to array of bytes 
     bytes = text.encode('utf-8') 
@@ -58,18 +58,30 @@ class UserObj:
 
 
 
+Auth = Blueprint("Auth",__name__)
     
 
-load_dotenv()#loading env variables
-Auth = Blueprint("Auth",__name__)
+local = True
+sql_config = {}
+
+# if os.getenv("IS_DOCKER") or local:
+if os.getenv("IS_DOCKER"):
+    print("Configuration is Docker")
+    sql_config['host'] = 'Database'
+    sql_config['database'] = 'SSO'
+    sql_config['user'] = 'custom'
+    sql_config['password'] = 'custom'
+
+else:
+    # load_dotenv()#loading env variables
+    sql_config['host'] = os.getenv('HOSTDB'), 
+    sql_config['user'] = os.getenv('USERDB'),  
+    sql_config['password'] = os.getenv('PASSDB'), 
+    sql_config['db'] = os.getenv('PASSDB'), 
+
 
 #mysql connection config
-conn = pymysql.connect( 
-        host=os.getenv('HOSTDB'), 
-        user=os.getenv('USERDB'),  
-        password = os.getenv('PASSDB'), 
-        db=os.getenv('DBDB'), 
-        ) 
+conn = pymysql.connect(**sql_config) 
 
 #route that handles login and notifies website
 @Auth.route("/Login", methods=('POST',))
