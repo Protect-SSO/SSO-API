@@ -9,17 +9,16 @@ import jwt
 import datetime
 
 #Encryption methods
-def encrypt(text):
+def encrypt(text:str):
     #hash text
     # converting password to array of bytes 
-    # bytes = text.encode('utf-8') 
+    bytes = text.encode('utf-8') 
   
     # generating the salt 
     salt = bcrypt.gensalt() 
   
     # Hashing the password 
-    # hash = bcrypt.hashpw(bytes, salt) 
-    hash = bcrypt.hashpw(text, salt) 
+    hash = bcrypt.hashpw(bytes, salt) 
     return hash
 
 
@@ -63,16 +62,19 @@ class UserObj:
 Auth = Blueprint("Auth",__name__)
     
 
-local = False
+local = True
 sql_config = {}
 
-if os.getenv("IS_DOCKER") or local:
+# if os.getenv("IS_DOCKER") or local:
+if os.getenv("IS_DOCKER"):
+    print("Configuration is Docker")
     sql_config['host'] = 'Database'
-    sql_config['user'] = 'root'
-    sql_config['db'] = 'SSO'
+    sql_config['database'] = 'SSO'
+    sql_config['user'] = 'custom'
+    sql_config['password'] = 'custom'
 
 else:
-    load_dotenv()#loading env variables
+    # load_dotenv()#loading env variables
     sql_config['host'] = os.getenv('HOSTDB'), 
     sql_config['user'] = os.getenv('USERDB'),  
     sql_config['password'] = os.getenv('PASSDB'), 
@@ -226,6 +228,7 @@ def RegUser():
     if not req:
         return jsonify(data)
 
+    print(req)
     Organization = req['OrgName']
     UserName = req['UserName']
     Password = req['Password']

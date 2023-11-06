@@ -9,6 +9,8 @@ services:
       - "5000:5000"
     networks:
       - main
+    volumes:
+      - "./Server/:/PYTHON_PROJ/"
     environment:
       IS_DOCKER: 1
       SECRETKEY: "SOME_KEY"
@@ -28,11 +30,6 @@ services:
     environment:
       IS_DOCKER: 1
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
-
-        # export HOSTDB='localhost'
-        # export PASSDB='pLue3472'
-        # export DBDB='SSO'
-        # export IS_DOCKER=1
 
 networks:
   main:

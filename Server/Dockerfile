@@ -1,7 +1,7 @@
 FROM python:3.9
 WORKDIR /PYTHON_PROJ 
-COPY *.py .
-RUN python3 -m pip install wheel
-RUN python3 -m pip install flask pymysql python-dotenv bcrypt pyjwt
+RUN apt-get -y update && apt-get install -y netcat-openbsd vim
+COPY * .
+RUN pip install -r ./requirements.txt
 ENV IS_DOCKER 1
-ENTRYPOINT [ "python3", "main.py" ]
+ENTRYPOINT [ "python", "main.py" ]
